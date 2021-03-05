@@ -156,52 +156,53 @@ class VMLinesScene: SKScene,
     
     //MARK: - VMGameDelegate
     func gameOver() {
+        DispatchQueue.main.async {}
         removeAllChildren()
         fillBackground()
     }
     
-    func addBalls(elements: Set<VMMatrixElement>) {
-        for element in elements {
-            if let ball = element.ball {
-                let color = ball.color
-                let name = String(format: "VMBalls.scnassets/%@.scn",color!)
+    func addBall(element: VMMatrixElement) {
+        DispatchQueue.main.async {}
+        if let ball = element.ball,
+           let color = ball.color
+        {
+            let name = String(format: "VMBalls.scnassets/%@.scn", color)
+            
+            if let ballScene = SCNScene(named: name) {
+                addSelectionObserver(element: element)
                 
-                if let ballScene = SCNScene(named: name) {
-                    addSelectionObserver(element: element)
-                    
-                    // create and add a light to the scene
-                    let lightNode = SCNNode()
-                    
-                    let light = SCNLight()
-                    light.type = .omni
-                    lightNode.light = light
-                    lightNode.position = SCNVector3(x: 0, y: 20, z: 10)
-                    ballScene.rootNode.addChildNode(lightNode)
-                    
-                    // retrieve the ball node
-                    if let ballNode = ballScene.rootNode.childNode(withName    : color!,
-                                                                   recursively : true)
-                    {
-                        switch ball.size {
-                        case .embryo:
-                            ballNode.scale = kVMEmbryoScale
-                            break
-                        case .fullSized:
-                            ballNode.scale = kVMFullSizeScale
-                            break
-                        case .none:
-                            break
-                        }
+                // create and add a light to the scene
+                let lightNode = SCNNode()
+                
+                let light = SCNLight()
+                light.type = .omni
+                lightNode.light = light
+                lightNode.position = SCNVector3(x: 0, y: 20, z: 10)
+                ballScene.rootNode.addChildNode(lightNode)
+                
+                // retrieve the ball node
+                if let ballNode = ballScene.rootNode.childNode(withName    : color,
+                                                               recursively : true)
+                {
+                    switch ball.size {
+                    case .embryo:
+                        ballNode.scale = kVMEmbryoScale
+                        break
+                    case .fullSized:
+                        ballNode.scale = kVMFullSizeScale
+                        break
+                    case .none:
+                        break
                     }
-                    
-                    // set the scene to the view
-                    let node = SK3DNode(viewportSize: kVMBallSize)
-                    node.scnScene = ballScene
-                    node.position = pointFromCoordinates(coordinates: element.coordinates)
-                    node.name = color
-                    
-                    addChild(node)
                 }
+                
+                // set the scene to the view
+                let node = SK3DNode(viewportSize: kVMBallSize)
+                node.scnScene = ballScene
+                node.position = pointFromCoordinates(coordinates: element.coordinates)
+                node.name = color
+                
+                addChild(node)
             }
         }
     }
@@ -209,34 +210,44 @@ class VMLinesScene: SKScene,
     func removeBall(element          : VMMatrixElement,
                     completion block : @escaping (Bool) -> Void)
     {
-        //invalidate observer
-        removeSelectionObserver(element: element)
-        //remove the ballNode from the scene
-        let ballCenter = pointFromCoordinates(coordinates:element.coordinates)
-        
-        if let ballNode = atPoint(ballCenter) as? SK3DNode {
-            let fadeAction = SKAction.fadeAlpha(to      : 0.0,
-                                                duration: kVMFadeDuration)
-            ballNode.run(fadeAction) {
-                ballNode.removeFromParent()
-                
-                block(true)
+        DispatchQueue.main.async {[weak self] in
+            guard let strongSelf = self else { return }
+            //invalidate observer
+            strongSelf.removeSelectionObserver(element: element)
+            //remove the ballNode from the scene
+            let ballCenter = strongSelf.pointFromCoordinates(coordinates:element.coordinates)
+            
+            if let ballNode = strongSelf.atPoint(ballCenter) as? SK3DNode {
+                let fadeAction = SKAction.fadeAlpha(to      : 0.0,
+                                                    duration: strongSelf.kVMFadeDuration)
+                ballNode.run(fadeAction) {
+                    DispatchQueue.main.async {
+                        ballNode.removeFromParent()
+                        
+                        block(true)
+                    }
+                }
             }
         }
     }
     
     func growUpBall(element: VMMatrixElement) {
-        let ballCenter = pointFromCoordinates(coordinates:element.coordinates)
-        
-        if let ballNode = atPoint(ballCenter) as? SK3DNode,
-           let ballScene = ballNode.scnScene,
-           let ball = element.ball
-        {
-            for childNode in ballScene.rootNode.childNodes {
-                if childNode.name == ball.color {
-                    let scaleAction = SCNAction.scale(to        : CGFloat(kVMFullSizeScale.x),
-                                                      duration  : kVMScaleDuration)
-                    childNode.runAction(scaleAction, forKey: kVMScaleActionKey)
+        DispatchQueue.main.async {[weak self] in
+            guard let strongSelf = self else { return }
+            
+            let ballCenter = strongSelf.pointFromCoordinates(coordinates:element.coordinates)
+            
+            if let ballNode = strongSelf.atPoint(ballCenter) as? SK3DNode,
+               let ballScene = ballNode.scnScene,
+               let ball = element.ball
+            {
+                for childNode in ballScene.rootNode.childNodes {
+                    if childNode.name == ball.color {
+                        let scaleAction = SCNAction.scale(to        : CGFloat(strongSelf.kVMFullSizeScale.x),
+                                                          duration  : strongSelf.kVMScaleDuration)
+                        childNode.runAction(scaleAction,
+                                            forKey: strongSelf.kVMScaleActionKey)
+                    }
                 }
             }
         }
@@ -245,40 +256,44 @@ class VMLinesScene: SKScene,
     func moveBallByPath(path             : [VMMatrixElement],
                         completion block : @escaping (Bool) -> Void)
     {
-        if let startElement = path.first {
-            let ballCenter = pointFromCoordinates(coordinates:startElement.coordinates)
+        DispatchQueue.main.async {[weak self] in
+            guard let strongSelf = self else { return }
             
-            if let ballNode = atPoint(ballCenter) as? SK3DNode {
-                //clear all animations from the ballNode
-                clearAnimations(element: startElement)
-            
-                let destinationElement = path.last
-                let destinationCoordinates = pointFromCoordinates(coordinates:(destinationElement?.coordinates)!)
+            if let startElement = path.first {
+                let ballCenter = strongSelf.pointFromCoordinates(coordinates:startElement.coordinates)
                 
-                //check if there's a small ball in the destination element
-                let nodeToRemove = atPoint(destinationCoordinates) as? SK3DNode
+                if let ballNode = strongSelf.atPoint(ballCenter) as? SK3DNode {
+                    //clear all animations from the ballNode
+                    strongSelf.clearAnimations(element: startElement)
                 
-                //create move actions sequence for the path
-                let movingSequence = movingSequenceForPath(path: path)
-                
-                //There's no method to run SKAction with key and completion block!
-                ballNode.run(SKAction.sequence(movingSequence)) {[weak self] in
-                    guard let strongSelf = self else { return }
+                    let destinationElement = path.last
+                    let destinationCoordinates = strongSelf.pointFromCoordinates(coordinates:(destinationElement?.coordinates)!)
                     
-                    DispatchQueue.main.async {
-                        nodeToRemove?.removeFromParent()
+                    //check if there's a small ball in the destination element
+                    let nodeToRemove = strongSelf.atPoint(destinationCoordinates) as? SK3DNode
+                    
+                    //create move actions sequence for the path
+                    let movingSequence = strongSelf.movingSequenceForPath(path: path)
+                    
+                    //There's no method to run SKAction with key and completion block!
+                    ballNode.run(SKAction.sequence(movingSequence)) {[weak self] in
+                        guard let strongSelf = self else { return }
+                        
+                        DispatchQueue.main.async {
+                            nodeToRemove?.removeFromParent()
+                            
+                            if let destinationElement = destinationElement,
+                               destinationElement != startElement
+                            {
+                                //add observer to the destination element
+                                //remove observing from the startElement
+                                strongSelf.addSelectionObserver(element: destinationElement)
+                                strongSelf.removeSelectionObserver(element: startElement)
+                            }
+                            
+                            block(true)
+                        }
                     }
-                    
-                    if let destinationElement = destinationElement,
-                       destinationElement != startElement
-                    {
-                        //add observer to the destination element
-                        //remove observing from the startElement
-                        strongSelf.addSelectionObserver(element: destinationElement)
-                        strongSelf.removeSelectionObserver(element: startElement)
-                    }
-                    
-                    block(true)
                 }
             }
         }
