@@ -25,6 +25,7 @@
 		D77B181F25D06EA5002F1BA0 /* VMLinesUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D77B181E25D06EA5002F1BA0 /* VMLinesUITests.swift */; };
 		D77B183325D07169002F1BA0 /* VMMatrix.swift in Sources */ = {isa = PBXBuildFile; fileRef = D77B183225D07169002F1BA0 /* VMMatrix.swift */; };
 		D77B183825D08D7E002F1BA0 /* VMMatrixElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = D77B183725D08D7E002F1BA0 /* VMMatrixElement.swift */; };
+		D79E5DAF25F0829000BA97E9 /* blue_particle.png in Resources */ = {isa = PBXBuildFile; fileRef = D79E5DAE25F0829000BA97E9 /* blue_particle.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -69,6 +70,7 @@
 		D77B182025D06EA5002F1BA0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D77B183225D07169002F1BA0 /* VMMatrix.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VMMatrix.swift; sourceTree = "<group>"; };
 		D77B183725D08D7E002F1BA0 /* VMMatrixElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VMMatrixElement.swift; sourceTree = "<group>"; };
+		D79E5DAE25F0829000BA97E9 /* blue_particle.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = blue_particle.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,6 +113,7 @@
 		D776201725E5C871003FC3FA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				D79E5DAE25F0829000BA97E9 /* blue_particle.png */,
 				D776200F25E5AFAF003FC3FA /* VMLinesScene.sks */,
 				D77B180525D06EA5002F1BA0 /* Assets.xcassets */,
 				D7761F9C25DDE21A003FC3FA /* VMBalls.scnassets */,
@@ -299,6 +302,7 @@
 				D776201025E5AFAF003FC3FA /* VMLinesScene.sks in Resources */,
 				D77B180625D06EA5002F1BA0 /* Assets.xcassets in Resources */,
 				D77B180425D06EA3002F1BA0 /* Main.storyboard in Resources */,
+				D79E5DAF25F0829000BA97E9 /* blue_particle.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

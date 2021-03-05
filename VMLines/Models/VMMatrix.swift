@@ -182,6 +182,124 @@ class VMMatrix {
         return result
     }
     
+    //MARK: - Searching the path
+    private struct kVMNode: Equatable {
+        var element    : VMMatrixElement
+        var parent     : VMMatrixElement?
+        
+        //Path length from the start node to the current node DE FACTO
+        var g : Int
+        
+        //f = g + hypotesys cost from the current to the destination node
+        var f : Int
+        
+        init(element    : VMMatrixElement,
+             parent     : VMMatrixElement?,
+             g          : Int,
+             f          : Int)
+        {
+            self.element = element
+            self.parent = parent
+            self.g = g
+            self.f = f
+        }
+        
+        static func == (lhs: Self, rhs: Self) -> Bool {
+            return lhs.element == rhs.element &&
+                lhs.g == rhs.g &&
+                lhs.f == rhs.f &&
+                lhs.parent == rhs.parent
+        }
+    }
+    
+    public func path(start: VMMatrixElement,
+                     destination: VMMatrixElement) -> [VMMatrixElement]?
+    {
+        if let destinationBall = destination.ball, destinationBall.size == .fullSized {
+            return nil
+        }
+        
+        if let ball = start.ball, ball.size == .fullSized {
+            //Initiate first Node from the first element
+            let f_initial = pathLength(from: start, to: destination)
+            let node_initial = kVMNode(element : start,
+                                       parent  : nil,
+                                       g       : 0,
+                                       f       : f_initial)
+            var openList = [node_initial]
+            var closedList = [kVMNode]()
+            
+            while !openList.isEmpty {
+                //find the node with the least f on the open list
+                //sort open list by pathLength in descending order
+                var openList_sorted = openList.sorted {
+                    return $0.f > $1.f
+                }
+                
+                //pop the node with the shortest pathLength
+                if let currentNode = openList_sorted.popLast() {
+                    openList.removeAll(where: {$0 == currentNode})
+                    //generate currentNode's neighbours and set their parents to currentNode
+                    let neighbours = neighboursForElement(element: currentNode.element)
+                    
+                    for neighbour in neighbours {
+                        let g = currentNode.g + 1
+                        let h = pathLength(from: neighbour, to: destination)
+                        let node = kVMNode(element      : neighbour,
+                                           parent       : currentNode.element,
+                                           g            : g,
+                                           f            : g+h)
+                        
+                        if neighbour == destination {
+                            //the path's found
+                            closedList.append(currentNode)
+                            closedList.append(node)
+                            
+                            return pathFromNodes(nodes: closedList, startElement: start)
+                        }
+                        
+                        if closedList.contains(where: {$0.element == node.element})
+                        {
+                            continue
+                        } else if let openNode = openList.first(where: {$0.element == node.element}),
+                           node.f >= openNode.f
+                        {
+                            continue
+                        } else {
+                            openList.append(node)
+                        }
+                    }
+                    
+                    if !closedList.contains(where: {$0.element == currentNode.element}) {
+                        closedList.append(currentNode)
+                    }
+                }
+            }
+        }
+        
+        return nil
+    }
+    
+    private func pathFromNodes(nodes       : [kVMNode],
+                               startElement: VMMatrixElement) -> [VMMatrixElement]
+    {
+        var currentNode = nodes.last!
+        var result = [currentNode.element]
+        
+        while currentNode.parent != startElement {
+            if let previousNode = nodes.first(where:
+                                                {$0.element == currentNode.parent})
+            {
+                currentNode = previousNode
+                result.insert(currentNode.element, at: 0)
+            }
+        }
+        
+        result.insert(startElement, at: 0)
+        
+        return result
+    }
+    
     //MARK: - Matrix components
     private func element(row: Int, column: Int) -> VMMatrixElement {
         return matrix[Int(row)][column]
