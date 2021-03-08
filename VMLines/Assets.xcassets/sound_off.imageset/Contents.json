@@ -1,11 +1,12 @@
 {
   "images" : [
     {
-      "filename" : "New Project (5).png",
+      "filename" : "baseline_volume_off_black_18dp.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
+      "filename" : "baseline_volume_off_black_18dp-1.png",
       "idiom" : "universal",
       "scale" : "2x"
     },

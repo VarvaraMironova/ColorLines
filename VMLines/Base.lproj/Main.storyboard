@@ -11,7 +11,7 @@
         <scene sceneID="hDS-yq-Hi0">
             <objects>
                 <viewController storyboardIdentifier="VMGameViewController" id="i3f-7V-M8u" customClass="VMGameViewController" customModule="VMLines" customModuleProvider="target" sceneMemberID="viewController">
-                    <view key="view" contentMode="scaleToFill" id="RCh-1O-LQd">
+                    <view key="view" contentMode="scaleToFill" id="RCh-1O-LQd" customClass="VMLinesRootView" customModule="VMLines" customModuleProvider="target">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
@@ -27,18 +27,35 @@
                                     <outletCollection property="gestureRecognizers" destination="Stz-7y-mWL" appends="YES" id="sLw-jt-wkV"/>
                                 </connections>
                             </skView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dY8-0t-kZ9">
+                                <rect key="frame" x="8" y="655" width="60" height="60"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="60" id="K5y-rL-89q"/>
+                                    <constraint firstAttribute="height" constant="60" id="sHr-IS-w7h"/>
+                                </constraints>
+                                <state key="normal" image="sound_on" backgroundImage="tile"/>
+                                <state key="selected" image="sound_off" backgroundImage="tile"/>
+                                <connections>
+                                    <action selector="onSoundButton:" destination="i3f-7V-M8u" eventType="touchUpInside" id="P2K-fm-uLr"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Mwl-mb-kcj"/>
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
+                            <constraint firstItem="dY8-0t-kZ9" firstAttribute="top" secondItem="Jf7-BT-fP5" secondAttribute="bottom" constant="8" id="5t5-0w-5rP"/>
                             <constraint firstItem="Jf7-BT-fP5" firstAttribute="centerX" secondItem="RCh-1O-LQd" secondAttribute="centerX" id="MQi-9D-pZg"/>
                             <constraint firstItem="Jf7-BT-fP5" firstAttribute="centerY" secondItem="RCh-1O-LQd" secondAttribute="centerY" id="feD-Yl-hqx"/>
+                            <constraint firstItem="dY8-0t-kZ9" firstAttribute="leading" secondItem="Jf7-BT-fP5" secondAttribute="leading" id="mSk-iU-VFj"/>
                             <constraint firstItem="Mwl-mb-kcj" firstAttribute="trailing" secondItem="Jf7-BT-fP5" secondAttribute="trailing" constant="8" id="pRe-f6-woK"/>
                             <constraint firstItem="Jf7-BT-fP5" firstAttribute="leading" secondItem="Mwl-mb-kcj" secondAttribute="leading" constant="8" id="pXH-ta-2Xq"/>
                         </constraints>
+                        <connections>
+                            <outlet property="linesSceneView" destination="Jf7-BT-fP5" id="4Kc-EK-ddJ"/>
+                            <outlet property="soundButton" destination="dY8-0t-kZ9" id="uHM-dZ-sbr"/>
+                        </connections>
                     </view>
                     <connections>
-                        <outlet property="sceneView" destination="Jf7-BT-fP5" id="ES7-Xl-OX6"/>
                         <outlet property="tapGestureRecognizer" destination="Stz-7y-mWL" id="nIf-nB-UQt"/>
                     </connections>
                 </viewController>
@@ -48,4 +65,9 @@
             <point key="canvasLocation" x="-743.47826086956525" y="47.544642857142854"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="sound_off" width="18" height="18"/>
+        <image name="sound_on" width="18" height="18"/>
+        <image name="tile" width="44" height="44"/>
+    </resources>
 </document>

@@ -13,6 +13,11 @@ import SceneKit
 class VMLinesScene: SKScene,
                     VMGameDelegate
 {
+    private var soundIsOn : Bool = true
+    
+    //MARK: - Preload actions
+    var playExplosionSound : SKAction = SKAction.playSoundFileNamed("exposion.mp3",
+                                                                    waitForCompletion: false)
     
     //MARK: - Action Keys
     let kVMMoveActionKey         = "move"
@@ -27,7 +32,7 @@ class VMLinesScene: SKScene,
     let kVMJumpDuration  = 0.1
     let kVMMoveDuration  = 0.06
     let kVMScaleDuration = 0.2
-    let kVMFadeDuration  = 0.2
+    let kVMFadeDuration  = 0.3
     
     lazy var jumpDelta : CGFloat = {
         let pileHight = size.height / 9.0
@@ -37,51 +42,13 @@ class VMLinesScene: SKScene,
     
     override func didMove(to view: SKView) {
         fillBackground()
+        
+        //preloadActions()
     }
     
-    public func fillBackground() {
-        let bgNode = SKSpriteNode(imageNamed: "field")
-        bgNode.size = size
-        bgNode.position = CGPoint.zero
-
-        addChild(bgNode)
-    }
-    
-    //observe element's attribute @selected
-    //selectionObservers is a dictionary of NSKeyValueObservation
-    //with coordinate.description as a key
-    //invalidate observers after removing and/or moving ball
-    var selectionObservers = [String : NSKeyValueObservation]()
-    
-    //MARK:- KVO
-    func addSelectionObserver(element: VMMatrixElement) {
-        if let coordinates = element.coordinates {
-            let selectionObserver = element.observe(\.selected, options: .new)
-            { [weak self](element, change) in
-                //indicate the selected node
-                guard let strongSelf = self else { return }
-                let ballCenter = strongSelf.pointFromCoordinates(coordinates:coordinates)
-
-                if let ballNode = strongSelf.atPoint(ballCenter) as? SK3DNode {
-                    if element.selected {
-                        strongSelf.jump(ballNode: ballNode)
-                    } else {
-                        strongSelf.clearAnimations(element: element)
-                    }
-                }
-            }
-            
-            selectionObservers[coordinates.description] = selectionObserver
-        }
-    }
-    
-    func removeSelectionObserver(element: VMMatrixElement) {
-        if let coordinates = element.coordinates,
-           let observer = selectionObservers[coordinates.description]
-        {
-            observer.invalidate()
-            selectionObservers[coordinates.description] = nil
-        }
+    //MARK:- Public
+    public func switchSound() {
+        soundIsOn = !soundIsOn
     }
     
     //MARK:- Private
@@ -92,6 +59,14 @@ class VMLinesScene: SKScene,
         let y = -itemWidth * CGFloat(coordinates.row - centralCoordinate.row)
         
         return CGPoint(x: x, y: y)
+    }
+    
+    private func fillBackground() {
+        let bgNode = SKSpriteNode(imageNamed: "field")
+        bgNode.size = size
+        bgNode.position = CGPoint.zero
+
+        addChild(bgNode)
     }
     
     //MARK:- Action Helpers
@@ -217,14 +192,26 @@ class VMLinesScene: SKScene,
             //remove the ballNode from the scene
             let ballCenter = strongSelf.pointFromCoordinates(coordinates:element.coordinates)
             
-            if let ballNode = strongSelf.atPoint(ballCenter) as? SK3DNode {
-                let fadeAction = SKAction.fadeAlpha(to      : 0.0,
-                                                    duration: strongSelf.kVMFadeDuration)
-                ballNode.run(fadeAction) {
-                    DispatchQueue.main.async {
+            if let color = element.ball?.color {
+                let exposionSceneName = String(format: "ExplodeBall.scnassets/%@.scn", color)
+                
+                if let ballNode = strongSelf.atPoint(ballCenter) as? SK3DNode,
+                   let exposionScene = SCNScene(named: exposionSceneName)
+                    {
+                    ballNode.scnScene = exposionScene
+                    
+                    if strongSelf.soundIsOn {
+                        ballNode.run(strongSelf.playExplosionSound)
+                    }
+                    
+                    let waitAction = SKAction.wait(forDuration: 0.3)
+                    ballNode.run(waitAction) {
                         ballNode.removeFromParent()
-                        
+
                         block(true)
+                        DispatchQueue.main.async {
+                            
+                        }
                     }
                 }
             }
@@ -296,6 +283,43 @@ class VMLinesScene: SKScene,
                     }
                 }
             }
+        }
+    }
+    
+    //MARK:- KVO
+    //observe element's attribute @selected
+    //selectionObservers is a dictionary of NSKeyValueObservation
+    //with coordinate.description as a key
+    //invalidate observers after removing and/or moving ball
+    var selectionObservers = [String : NSKeyValueObservation]()
+    
+    func addSelectionObserver(element: VMMatrixElement) {
+        if let coordinates = element.coordinates {
+            let selectionObserver = element.observe(\.selected, options: .new)
+            { [weak self](element, change) in
+                //indicate the selected node
+                guard let strongSelf = self else { return }
+                let ballCenter = strongSelf.pointFromCoordinates(coordinates:coordinates)
+
+                if let ballNode = strongSelf.atPoint(ballCenter) as? SK3DNode {
+                    if element.selected {
+                        strongSelf.jump(ballNode: ballNode)
+                    } else {
+                        strongSelf.clearAnimations(element: element)
+                    }
+                }
+            }
+            
+            selectionObservers[coordinates.description] = selectionObserver
+        }
+    }
+    
+    func removeSelectionObserver(element: VMMatrixElement) {
+        if let coordinates = element.coordinates,
+           let observer = selectionObservers[coordinates.description]
+        {
+            observer.invalidate()
+            selectionObservers[coordinates.description] = nil
         }
     }
 

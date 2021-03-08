@@ -43,11 +43,13 @@ class VMGame {
     let ballColors = ["darkBlue", "darkRed", "green", "lightBlue", "lightRed", "pink", "yellow"]
     let matrixSize = (rows: 9, columns: 9)
     
-    weak var gameDelegate: VMGameDelegate?
+    weak var gameDelegate: VMGameDelegate? {
+        didSet(aNewValue) {
+            spawnBalls(initially: true)
+        }
+    }
     
-    required init(delegate: VMGameDelegate) {
-        gameDelegate = delegate
-        
+    required init() {
         setup()
     }
     
@@ -55,7 +57,6 @@ class VMGame {
         matrix = VMMatrix(rows    : matrixSize.rows,
                           columns : matrixSize.columns)
         
-        spawnBalls(initially: true)
         //timer = VMTimer(game: self)
     }
     
@@ -68,6 +69,7 @@ class VMGame {
         score = 0
         embryoColors = [String]()
         setup()
+        spawnBalls(initially: true)
     }
     
     public func selectElement(coordinates: VMElementCoordinates) {
@@ -97,15 +99,19 @@ class VMGame {
             
             for elementToClear in lines {
                 handleLinesGroup.enter()
-                matrix.clearElement(element: elementToClear)
                 
-                delegate.removeBall(element: elementToClear) { (finished) in
+                delegate.removeBall(element: elementToClear) { [weak matrix, weak elementToClear] (finished) in
+                    if let matrix = matrix, let element = elementToClear {
+                        matrix.clearElement(element: element)
+                    }
+                    
                     handleLinesGroup.leave()
                 }
             }
             
             handleLinesGroup.notify(queue: .main) {
-                    block(true)
+                
+                block(true)
             }
         }
     }

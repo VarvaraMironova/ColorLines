@@ -14,8 +14,10 @@ class VMGameViewController: UIViewController,
                             
 {
     
+    weak private var rootView: VMLinesRootView? {
+        return viewIfLoaded as? VMLinesRootView
+    }
 
-    @IBOutlet var sceneView             : SKView!
     @IBOutlet var tapGestureRecognizer  : UITapGestureRecognizer!
     
     var game : VMGame?
@@ -24,9 +26,10 @@ class VMGameViewController: UIViewController,
         super.viewDidLoad()
         
         // setup the scene
-        if let scene = sceneView.scene as? VMLinesScene {
-            scene.scaleMode = .aspectFit
-            game = VMGame(delegate: scene)
+        if let rootView = rootView {
+            game = VMGame()
+            
+            rootView.setupSceneForGame(game: game!)
         }
         
         // setup gestureRecognizer
@@ -34,20 +37,20 @@ class VMGameViewController: UIViewController,
     }
     
     @objc func onTapGesture(recognizer: UITapGestureRecognizer) {
-        if let game = game {
+        if let rootView = rootView,
+           let sceneView = rootView.linesSceneView,
+           let game = game
+        {
             let location = recognizer.location(in: sceneView)
-            let coordinates = coordinatesByLocation(location: location)
+            let coordinates = rootView.coordinatesForPoint(location: location)
             game.selectElement(coordinates: coordinates)
         }
     }
     
-    //MARK: - Heplers
-    private func coordinatesByLocation(location: CGPoint) -> VMElementCoordinates {
-        let pileWidth = sceneView.bounds.size.width / 9
-        let row = Int(location.y / pileWidth)
-        let column = Int(location.x / pileWidth)
-        
-        return VMElementCoordinates(row: row, column: column)
+    //MARK: - Actions
+    @IBAction func onSoundButton(_ sender: UIButton) {
+        if let rootView = rootView {
+            rootView.switchSound()
+        }
     }
-    
 }
