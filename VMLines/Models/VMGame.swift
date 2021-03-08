@@ -65,7 +65,8 @@ class VMGame {
     }
     
     //MARK: - Public
-    public func reset() {
+    public func restart() {
+        gameDelegate?.gameOver()
         score = 0
         embryoColors = [String]()
         setup()
@@ -183,8 +184,7 @@ class VMGame {
         var emptyCells = matrix.emptyCells
         
         if emptyCells.count < embryosCount {
-            gameDelegate?.gameOver()
-            reset()
+            restart()
         } else {
             let fullSizedCount = initially ? 5 : 3
             
