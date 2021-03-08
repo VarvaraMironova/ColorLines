@@ -53,4 +53,9 @@ class VMGameViewController: UIViewController,
             rootView.switchSound()
         }
     }
+    @IBAction func onRestartButton(_ sender: UIButton) {
+        if let game = game {
+            game.restart()
+        }
+    }
 }

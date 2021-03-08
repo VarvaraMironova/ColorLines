@@ -12,6 +12,7 @@ class VMLinesRootView: UIView {
     
     @IBOutlet var linesSceneView : SKView!
     @IBOutlet var soundButton    : UIButton!
+    @IBOutlet var restartButton  : UIButton!
     
     //MARK: - Public
     public func setupSceneForGame(game: VMGame) {
