@@ -42,8 +42,9 @@ class VMGameViewController: UIViewController,
            let game = game
         {
             let location = recognizer.location(in: sceneView)
-            let coordinates = rootView.coordinatesForPoint(location: location)
-            game.selectElement(coordinates: coordinates)
+            if let coordinates = rootView.coordinatesForPoint(location: location) {
+                game.selectElement(coordinates: coordinates)
+            }
         }
     }
     

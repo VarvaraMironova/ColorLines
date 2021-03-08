@@ -16,11 +16,11 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <skView contentMode="scaleAspectFit" sceneName="VMLinesScene.sks" translatesAutoresizingMaskIntoConstraints="NO" id="Jf7-BT-fP5">
-                                <rect key="frame" x="8" y="249" width="398" height="398"/>
+                                <rect key="frame" x="8" y="219.5" width="398" height="457"/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <gestureRecognizers/>
                                 <constraints>
-                                    <constraint firstAttribute="width" secondItem="Jf7-BT-fP5" secondAttribute="height" multiplier="1:1" id="lA4-8s-Pbd"/>
+                                    <constraint firstAttribute="width" secondItem="Jf7-BT-fP5" secondAttribute="height" multiplier="406:466" id="lA4-8s-Pbd"/>
                                 </constraints>
                                 <connections>
                                     <outlet property="delegate" destination="i3f-7V-M8u" id="jdc-vz-YBW"/>
@@ -28,7 +28,7 @@
                                 </connections>
                             </skView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dY8-0t-kZ9">
-                                <rect key="frame" x="8" y="655" width="60" height="60"/>
+                                <rect key="frame" x="8" y="684.5" width="60" height="60"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="60" id="K5y-rL-89q"/>
                                     <constraint firstAttribute="height" constant="60" id="sHr-IS-w7h"/>
@@ -40,7 +40,7 @@
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Jjl-Gd-3ss">
-                                <rect key="frame" x="346" y="655" width="60" height="60"/>
+                                <rect key="frame" x="346" y="684.5" width="60" height="60"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="60" id="JXf-0I-LoA"/>
                                     <constraint firstAttribute="height" constant="60" id="QpJ-BW-wJb"/>
