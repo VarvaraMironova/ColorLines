@@ -18,6 +18,8 @@ protocol VMGameDelegate: class {
     
     func growUpBall(element: VMMatrixElement)
     
+    func pickFutureColors(colors: [String])
+    
     func gameOver()
 }
 
@@ -25,7 +27,13 @@ class VMGame {
     var matrix : VMMatrix!
     var timer  : VMTimer?
     
-    var embryoColors = [String]()
+    var embryoColors = [String]() {
+        willSet(aNewValue) {
+            if aNewValue != embryoColors {
+                gameDelegate?.pickFutureColors(colors: aNewValue)
+            }
+        }
+    }
     
     public var score : Int = 0 {
         didSet {
@@ -263,6 +271,10 @@ class VMGame {
     }
     
     //MARK: - Helpers
+    private func pickFutureEmbryos() {
+        
+    }
+    
     private func growUpElement(element: VMMatrixElement) {
         element.growUp()
         

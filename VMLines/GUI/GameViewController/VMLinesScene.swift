@@ -25,9 +25,10 @@ class VMLinesScene: SKScene,
     let kVMBackToCenterActionKey = "back"
     let kVMJumpActionKey         = "jump"
     
-    let kVMBallSize      = CGSize(width: 40.0, height: 40.0)
-    let kVMEmbryoScale   = SCNVector3(0.5, 0.5, 0.5)
-    let kVMFullSizeScale = SCNVector3(1.4, 1.4, 1.4)
+    let kVMBallSize        = CGSize(width: 40.0, height: 40.0)
+    let kVMEmbryoScale     = SCNVector3(0.5, 0.5, 0.5)
+    let kVMFullSizeScale   = SCNVector3(1.4, 1.4, 1.4)
+    let kVMFutureBallScale = SCNVector3(1, 1, 1)
     
     let kVMJumpDuration  = 0.1
     let kVMMoveDuration  = 0.06
@@ -42,8 +43,6 @@ class VMLinesScene: SKScene,
     
     override func didMove(to view: SKView) {
         fillBackground()
-        
-        //preloadActions()
     }
     
     //MARK:- Public
@@ -57,7 +56,19 @@ class VMLinesScene: SKScene,
         let headerHeight = size.height - size.width
         let centralCoordinate = VMElementCoordinates(row: 4, column: 4)
         let x = itemWidth * CGFloat(coordinates.column - centralCoordinate.column)
-        let y = -itemWidth * CGFloat(coordinates.row - centralCoordinate.row) + (headerHeight - 2*itemWidth)
+        let y = -itemWidth * CGFloat(coordinates.row - centralCoordinate.row) + (headerHeight - 2 * itemWidth)
+        
+        return CGPoint(x: x, y: y)
+    }
+    
+    private func headerPointFromIndex(index: Int) -> CGPoint {
+        let width = size.width
+        let height = size.height
+        let itemWidth = width / 9.0
+        let headerHeight = height - width
+        
+        let x = itemWidth * CGFloat(index - 1)
+        let y = (height - headerHeight) / 2.0
         
         return CGPoint(x: x, y: y)
     }
@@ -68,6 +79,17 @@ class VMLinesScene: SKScene,
         bgNode.position = CGPoint.zero
 
         addChild(bgNode)
+    }
+    
+    private func setupLightForBallScene(ballScene: SCNScene) {
+        // create and add a light to the scene
+        let lightNode = SCNNode()
+        
+        let light = SCNLight()
+        light.type = .omni
+        lightNode.light = light
+        lightNode.position = SCNVector3(x: 0, y: 20, z: 10)
+        ballScene.rootNode.addChildNode(lightNode)
     }
     
     //MARK:- Action Helpers
@@ -130,11 +152,42 @@ class VMLinesScene: SKScene,
         }
     }
     
+    private func removeFutureColor(point: CGPoint) {
+        if let ballNode = atPoint(point) as? SK3DNode {
+            ballNode.removeFromParent()
+        }
+    }
+    
     //MARK: - VMGameDelegate
     func gameOver() {
         DispatchQueue.main.async {}
         removeAllChildren()
         fillBackground()
+    }
+    
+    func pickFutureColors(colors: [String]) {
+        DispatchQueue.main.async {[weak self] in
+            guard let strongSelf = self else { return }
+            
+            for color in colors {
+                let name = String(format: "VMBalls.scnassets/%@.scn", color)
+                
+                if let ballScene = SCNScene(named: name) {
+                    strongSelf.setupLightForBallScene(ballScene: ballScene)
+                    
+                    let node = SK3DNode(viewportSize: strongSelf.kVMBallSize)
+                    node.scnScene = ballScene
+                    let position = strongSelf.headerPointFromIndex(index: colors.firstIndex(of: color)!)
+                    
+                    strongSelf.removeFutureColor(point: position)
+                    
+                    node.position = position
+                    node.name = color
+                    
+                    strongSelf.addChild(node)
+                }
+            }
+        }
     }
     
     func addBall(element: VMMatrixElement) {
@@ -148,13 +201,7 @@ class VMLinesScene: SKScene,
                 addSelectionObserver(element: element)
                 
                 // create and add a light to the scene
-                let lightNode = SCNNode()
-                
-                let light = SCNLight()
-                light.type = .omni
-                lightNode.light = light
-                lightNode.position = SCNVector3(x: 0, y: 20, z: 10)
-                ballScene.rootNode.addChildNode(lightNode)
+                setupLightForBallScene(ballScene: ballScene)
                 
                 // retrieve the ball node
                 if let ballNode = ballScene.rootNode.childNode(withName    : color,
