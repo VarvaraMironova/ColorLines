@@ -35,7 +35,7 @@ class VMLinesScene: SKScene,
     let kVMFadeDuration  = 0.3
     
     lazy var jumpDelta : CGFloat = {
-        let pileHight = size.height / 9.0
+        let pileHight = size.width / 9.0
         
         return (pileHight - kVMBallSize.height) / CGFloat(kVMFullSizeScale.y)
     }()
@@ -54,9 +54,10 @@ class VMLinesScene: SKScene,
     //MARK:- Private
     private func pointFromCoordinates(coordinates: VMElementCoordinates) -> CGPoint {
         let itemWidth = size.width / 9.0
+        let headerHeight = size.height - size.width
         let centralCoordinate = VMElementCoordinates(row: 4, column: 4)
         let x = itemWidth * CGFloat(coordinates.column - centralCoordinate.column)
-        let y = -itemWidth * CGFloat(coordinates.row - centralCoordinate.row)
+        let y = -itemWidth * CGFloat(coordinates.row - centralCoordinate.row) + (headerHeight - 2*itemWidth)
         
         return CGPoint(x: x, y: y)
     }
@@ -95,7 +96,7 @@ class VMLinesScene: SKScene,
     //Destination element is the last element in the path
     private func movingSequenceForPath(path : [VMMatrixElement]) -> [SKAction] {
         var result = [SKAction]()
-        let pileHight = size.height / 9.0
+        let pileHight = size.width / 9.0
         
         if var element = path.first {
             for i in 1...path.count - 1 {

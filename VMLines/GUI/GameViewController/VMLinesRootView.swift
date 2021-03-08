@@ -22,9 +22,17 @@ class VMLinesRootView: UIView {
         }
     }
     
-    public func coordinatesForPoint(location: CGPoint) -> VMElementCoordinates {
+    public func coordinatesForPoint(location: CGPoint) -> VMElementCoordinates? {
+        let headerHeight = linesSceneView.bounds.size.height - linesSceneView.bounds.size.width
+        
+        //check if the header was touched
+        if location.y < headerHeight {
+            return nil
+        }
+        
         let pileWidth = linesSceneView.bounds.size.width / 9
-        let row = Int(location.y / pileWidth)
+        
+        let row = Int((location.y - headerHeight) / pileWidth)
         let column = Int(location.x / pileWidth)
         
         return VMElementCoordinates(row: row, column: column)
