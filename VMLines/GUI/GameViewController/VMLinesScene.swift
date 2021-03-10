@@ -9,31 +9,71 @@ import UIKit
 import SpriteKit
 import SceneKit
 
+extension VMLinesScene {
+    enum kVMHeaderLabelType {
+        case left;
+        case right
+    }
+}
+
+extension SKNode {
+    func visit(logic: (_ node: SKNode) -> ()) {
+        logic(self)
+        children.forEach { $0.visit(logic: logic) }
+    }
+}
+
+extension SKLabelNode {
+    func setup() {
+        visit { (node) -> () in
+            if let label = node as? SKLabelNode {
+                label.fontName = "ARCADE"
+                label.fontColor = UIColor(red   : 121.0/255.0,
+                                          green : 196.0/255.0,
+                                          blue  : 232.0/255.0,
+                                          alpha : 1.0)
+                label.fontSize = 40.0
+                label.horizontalAlignmentMode = .center
+                label.text = "00000"
+            }
+        }
+    }
+}
 
 class VMLinesScene: SKScene,
                     VMGameDelegate
 {
+    var bestScoreLabel : SKLabelNode?
+    var scoreLabel    : SKLabelNode?
+    
     private var soundIsOn : Bool = true
     
     //MARK: - Preload actions
-    var playExplosionSound : SKAction = SKAction.playSoundFileNamed("exposion.mp3",
+    private var playExplosionSound : SKAction = SKAction.playSoundFileNamed("exposion.mp3",
                                                                     waitForCompletion: false)
     
+    //MARK: - Constants
     //MARK: - Action Keys
     let kVMMoveActionKey         = "move"
     let kVMScaleActionKey        = "scale"
     let kVMBackToCenterActionKey = "back"
     let kVMJumpActionKey         = "jump"
     
+    //MARK: - Size constants
     let kVMBallSize        = CGSize(width: 40.0, height: 40.0)
     let kVMEmbryoScale     = SCNVector3(0.5, 0.5, 0.5)
     let kVMFullSizeScale   = SCNVector3(1.4, 1.4, 1.4)
     let kVMFutureBallScale = SCNVector3(1, 1, 1)
     
+    //MARK: - Durations
     let kVMJumpDuration  = 0.1
     let kVMMoveDuration  = 0.06
     let kVMScaleDuration = 0.2
     let kVMFadeDuration  = 0.3
+    
+    //MARK: - UIConstants
+    let kVMLabelIntent      : CGFloat = 8.0
+    let kVMHeaderLabelWidth : CGFloat = 50.0
     
     lazy var jumpDelta : CGFloat = {
         let pileHight = size.width / 9.0
@@ -51,7 +91,7 @@ class VMLinesScene: SKScene,
     }
     
     //MARK:- Private
-    private func pointFromCoordinates(coordinates: VMElementCoordinates) -> CGPoint {
+    private func ballPosition(coordinates: VMElementCoordinates) -> CGPoint {
         let itemWidth = size.width / 9.0
         let headerHeight = size.height - size.width
         let centralCoordinate = VMElementCoordinates(row: 4, column: 4)
@@ -61,7 +101,7 @@ class VMLinesScene: SKScene,
         return CGPoint(x: x, y: y)
     }
     
-    private func headerPointFromIndex(index: Int) -> CGPoint {
+    private func headerBallPosition(index: Int) -> CGPoint {
         let width = size.width
         let height = size.height
         let itemWidth = width / 9.0
@@ -73,12 +113,41 @@ class VMLinesScene: SKScene,
         return CGPoint(x: x, y: y)
     }
     
+    private func headerLabelPosition(headerLabelType: kVMHeaderLabelType) -> CGPoint {
+        let width = size.width
+        let height = size.height
+        let headerHeight = height - width
+        
+        let x = headerLabelType == .left ?
+            (-width / 2.0 + kVMLabelIntent + kVMHeaderLabelWidth) : (width / 2.0 - kVMLabelIntent - kVMHeaderLabelWidth)
+        let y = (height - headerHeight) / 2.0 - 20.0
+        
+        return CGPoint(x: x, y: y)
+    }
+    
+    
+    
     private func fillBackground() {
+        //background
         let bgNode = SKSpriteNode(imageNamed: "field")
         bgNode.size = size
         bgNode.position = CGPoint.zero
 
         addChild(bgNode)
+        
+        //bestScoreLabel
+        bestScoreLabel = SKLabelNode()
+        bestScoreLabel?.setup()
+        bestScoreLabel?.position = headerLabelPosition(headerLabelType: .left)
+        
+        addChild(bestScoreLabel!)
+        
+        //scoreLabel
+        scoreLabel = SKLabelNode()
+        scoreLabel?.setup()
+        scoreLabel?.position = headerLabelPosition(headerLabelType: .right)
+        
+        addChild(scoreLabel!)
     }
     
     private func setupLightForBallScene(ballScene: SCNScene) {
@@ -90,6 +159,16 @@ class VMLinesScene: SKScene,
         lightNode.light = light
         lightNode.position = SCNVector3(x: 0, y: 20, z: 10)
         ballScene.rootNode.addChildNode(lightNode)
+    }
+    
+    private func scoreToString(score: Int) -> String {
+        var result = String(score)
+        
+        while result.count < 5 {
+            result.insert("0", at: result.startIndex)
+        }
+        
+        return result
     }
     
     //MARK:- Action Helpers
@@ -139,7 +218,7 @@ class VMLinesScene: SKScene,
     }
     
     private func clearAnimations(element: VMMatrixElement) {
-        let ballCenter = pointFromCoordinates(coordinates:element.coordinates)
+        let ballCenter = ballPosition(coordinates:element.coordinates)
 
         if let ballNode = atPoint(ballCenter) as? SK3DNode {
             ballNode.removeAction(forKey: kVMJumpActionKey)
@@ -177,7 +256,7 @@ class VMLinesScene: SKScene,
                     
                     let node = SK3DNode(viewportSize: strongSelf.kVMBallSize)
                     node.scnScene = ballScene
-                    let position = strongSelf.headerPointFromIndex(index: colors.firstIndex(of: color)!)
+                    let position = strongSelf.headerBallPosition(index: colors.firstIndex(of: color)!)
                     
                     strongSelf.removeFutureColor(point: position)
                     
@@ -222,7 +301,7 @@ class VMLinesScene: SKScene,
                 // set the scene to the view
                 let node = SK3DNode(viewportSize: kVMBallSize)
                 node.scnScene = ballScene
-                node.position = pointFromCoordinates(coordinates: element.coordinates)
+                node.position = ballPosition(coordinates: element.coordinates)
                 node.name = color
                 
                 addChild(node)
@@ -238,7 +317,7 @@ class VMLinesScene: SKScene,
             //invalidate observer
             strongSelf.removeSelectionObserver(element: element)
             //remove the ballNode from the scene
-            let ballCenter = strongSelf.pointFromCoordinates(coordinates:element.coordinates)
+            let ballCenter = strongSelf.ballPosition(coordinates:element.coordinates)
             
             if let color = element.ball?.color {
                 let exposionSceneName = String(format: "ExplodeBall.scnassets/%@.scn", color)
@@ -266,11 +345,19 @@ class VMLinesScene: SKScene,
         }
     }
     
+    func updateScore(score: Int) {
+        scoreLabel?.text = scoreToString(score: score)
+    }
+    
+    func updateBestScore(bestScore: Int) {
+        bestScoreLabel?.text = scoreToString(score: bestScore)
+    }
+    
     func growUpBall(element: VMMatrixElement) {
         DispatchQueue.main.async {[weak self] in
             guard let strongSelf = self else { return }
             
-            let ballCenter = strongSelf.pointFromCoordinates(coordinates:element.coordinates)
+            let ballCenter = strongSelf.ballPosition(coordinates:element.coordinates)
             
             if let ballNode = strongSelf.atPoint(ballCenter) as? SK3DNode,
                let ballScene = ballNode.scnScene,
@@ -295,14 +382,14 @@ class VMLinesScene: SKScene,
             guard let strongSelf = self else { return }
             
             if let startElement = path.first {
-                let ballCenter = strongSelf.pointFromCoordinates(coordinates:startElement.coordinates)
+                let ballCenter = strongSelf.ballPosition(coordinates:startElement.coordinates)
                 
                 if let ballNode = strongSelf.atPoint(ballCenter) as? SK3DNode {
                     //clear all animations from the ballNode
                     strongSelf.clearAnimations(element: startElement)
                 
                     let destinationElement = path.last
-                    let destinationCoordinates = strongSelf.pointFromCoordinates(coordinates:(destinationElement?.coordinates)!)
+                    let destinationCoordinates = strongSelf.ballPosition(coordinates:(destinationElement?.coordinates)!)
                     
                     //check if there's a small ball in the destination element
                     let nodeToRemove = strongSelf.atPoint(destinationCoordinates) as? SK3DNode
@@ -347,7 +434,7 @@ class VMLinesScene: SKScene,
             { [weak self](element, change) in
                 //indicate the selected node
                 guard let strongSelf = self else { return }
-                let ballCenter = strongSelf.pointFromCoordinates(coordinates:coordinates)
+                let ballCenter = strongSelf.ballPosition(coordinates:coordinates)
 
                 if let ballNode = strongSelf.atPoint(ballCenter) as? SK3DNode {
                     if element.selected {
