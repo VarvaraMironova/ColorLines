@@ -31,13 +31,7 @@ class VMGame {
     var matrix : VMMatrix!
     var timer  : VMTimer?
     
-    var embryoColors = [String]() {
-        willSet(aNewValue) {
-            if aNewValue != embryoColors {
-                gameDelegate?.pickFutureColors(colors: aNewValue)
-            }
-        }
-    }
+    var embryoColors = [String]()
     
     var score : Int = 0 {
         didSet {
@@ -138,7 +132,6 @@ class VMGame {
             }
             
             handleLinesGroup.notify(queue: .main) {
-                
                 block(true)
             }
         }
@@ -280,18 +273,20 @@ class VMGame {
             }
             
             //pick the colors for the future embryos
-            embryoColors = [String]()
-            for _ in 1...embryosCount {
-                if let color = ballColors.randomElement() {
-                    embryoColors.append(color)
-                }
-            }
+            pickFutureEmbryoColors()
         }
     }
     
     //MARK: - Helpers
-    private func pickFutureEmbryos() {
+    private func pickFutureEmbryoColors() {
+        embryoColors = [String]()
+        for _ in 1...3 {
+            if let color = ballColors.randomElement() {
+                embryoColors.append(color)
+            }
+        }
         
+        gameDelegate?.pickFutureColors(colors: embryoColors)
     }
     
     private func growUpElement(element: VMMatrixElement) {

@@ -125,8 +125,6 @@ class VMLinesScene: SKScene,
         return CGPoint(x: x, y: y)
     }
     
-    
-    
     private func fillBackground() {
         //background
         let bgNode = SKSpriteNode(imageNamed: "field")
@@ -239,38 +237,32 @@ class VMLinesScene: SKScene,
     
     //MARK: - VMGameDelegate
     func gameOver() {
-        DispatchQueue.main.async {}
         removeAllChildren()
         fillBackground()
     }
     
     func pickFutureColors(colors: [String]) {
-        DispatchQueue.main.async {[weak self] in
-            guard let strongSelf = self else { return }
+        for i in 0...2 {
+            let color = colors[i]
+            let name = String(format: "VMBalls.scnassets/%@.scn", color)
             
-            for color in colors {
-                let name = String(format: "VMBalls.scnassets/%@.scn", color)
+            if let ballScene = SCNScene(named: name) {
+                let position = headerBallPosition(index: i)
+                removeFutureColor(point: position)
                 
-                if let ballScene = SCNScene(named: name) {
-                    strongSelf.setupLightForBallScene(ballScene: ballScene)
-                    
-                    let node = SK3DNode(viewportSize: strongSelf.kVMBallSize)
-                    node.scnScene = ballScene
-                    let position = strongSelf.headerBallPosition(index: colors.firstIndex(of: color)!)
-                    
-                    strongSelf.removeFutureColor(point: position)
-                    
-                    node.position = position
-                    node.name = color
-                    
-                    strongSelf.addChild(node)
-                }
+                setupLightForBallScene(ballScene: ballScene)
+                
+                let node = SK3DNode(viewportSize: kVMBallSize)
+                node.scnScene = ballScene
+                node.position = position
+                node.name = color
+                
+                addChild(node)
             }
         }
     }
     
     func addBall(element: VMMatrixElement) {
-        DispatchQueue.main.async {}
         if let ball = element.ball,
            let color = ball.color
         {
@@ -336,9 +328,6 @@ class VMLinesScene: SKScene,
                         ballNode.removeFromParent()
 
                         block(true)
-                        DispatchQueue.main.async {
-                            
-                        }
                     }
                 }
             }
