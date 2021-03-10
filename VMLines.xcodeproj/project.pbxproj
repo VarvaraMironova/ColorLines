@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		D711FFB825D1FDFE0066CFC8 /* VMGame.swift in Sources */ = {isa = PBXBuildFile; fileRef = D711FFB725D1FDFE0066CFC8 /* VMGame.swift */; };
-		D711FFBE25D21D560066CFC8 /* VMTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D711FFBD25D21D560066CFC8 /* VMTimer.swift */; };
 		D711FFCA25D44F650066CFC8 /* VMBall.swift in Sources */ = {isa = PBXBuildFile; fileRef = D711FFC925D44F650066CFC8 /* VMBall.swift */; };
 		D7761FC525DF4440003FC3FA /* VMBalls.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = D7761F9C25DDE21A003FC3FA /* VMBalls.scnassets */; };
 		D7761FCA25E07842003FC3FA /* VMGameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D7761FC925E07842003FC3FA /* VMGameViewController.swift */; };
@@ -49,7 +48,6 @@
 
 /* Begin PBXFileReference section */
 		D711FFB725D1FDFE0066CFC8 /* VMGame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VMGame.swift; sourceTree = "<group>"; };
-		D711FFBD25D21D560066CFC8 /* VMTimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VMTimer.swift; sourceTree = "<group>"; };
 		D711FFC925D44F650066CFC8 /* VMBall.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VMBall.swift; sourceTree = "<group>"; };
 		D7761F9C25DDE21A003FC3FA /* VMBalls.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = VMBalls.scnassets; sourceTree = "<group>"; };
 		D7761FC925E07842003FC3FA /* VMGameViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VMGameViewController.swift; sourceTree = "<group>"; };
@@ -107,7 +105,6 @@
 			children = (
 				D77B183725D08D7E002F1BA0 /* VMMatrixElement.swift */,
 				D77B183225D07169002F1BA0 /* VMMatrix.swift */,
-				D711FFBD25D21D560066CFC8 /* VMTimer.swift */,
 				D711FFB725D1FDFE0066CFC8 /* VMGame.swift */,
 				D711FFC925D44F650066CFC8 /* VMBall.swift */,
 			);
@@ -369,7 +366,6 @@
 			files = (
 				D77B183825D08D7E002F1BA0 /* VMMatrixElement.swift in Sources */,
 				D77B183325D07169002F1BA0 /* VMMatrix.swift in Sources */,
-				D711FFBE25D21D560066CFC8 /* VMTimer.swift in Sources */,
 				D776202125E5D1E9003FC3FA /* VMLinesRootView.swift in Sources */,
 				D776200B25E5AB49003FC3FA /* VMLinesScene.swift in Sources */,
 				D77B17FD25D06EA3002F1BA0 /* AppDelegate.swift in Sources */,
