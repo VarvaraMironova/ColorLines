@@ -32,7 +32,7 @@ extension SKLabelNode {
                                           green : 196.0/255.0,
                                           blue  : 232.0/255.0,
                                           alpha : 1.0)
-                label.fontSize = 40.0
+                label.fontSize = 36.0
                 label.horizontalAlignmentMode = .center
                 label.text = "00000"
             }
@@ -75,10 +75,25 @@ class VMLinesScene: SKScene,
     let kVMLabelIntent      : CGFloat = 8.0
     let kVMHeaderLabelWidth : CGFloat = 50.0
     
+    //MAKR: - ease math
     lazy var jumpDelta : CGFloat = {
-        let pileHight = size.width / 9.0
-        
-        return (pileHight - kVMBallSize.height) / CGFloat(kVMFullSizeScale.y)
+        return (itemWidth - kVMBallSize.height) / CGFloat(kVMFullSizeScale.y)
+    }()
+    
+    lazy var width : CGFloat = {
+        return size.width
+    }()
+    
+    lazy var height : CGFloat = {
+        return size.height
+    }()
+    
+    lazy var itemWidth : CGFloat = {
+        return width / 9.0
+    }()
+    
+    lazy var headerHeight : CGFloat = {
+        return height - width
     }()
     
     override func didMove(to view: SKView) {
@@ -92,21 +107,14 @@ class VMLinesScene: SKScene,
     
     //MARK:- Private
     private func ballPosition(coordinates: VMElementCoordinates) -> CGPoint {
-        let itemWidth = size.width / 9.0
-        let headerHeight = size.height - size.width
         let centralCoordinate = VMElementCoordinates(row: 4, column: 4)
         let x = itemWidth * CGFloat(coordinates.column - centralCoordinate.column)
-        let y = -itemWidth * CGFloat(coordinates.row - centralCoordinate.row) + (headerHeight - 2 * itemWidth)
+        let y = itemWidth * CGFloat(centralCoordinate.row - coordinates.row) - headerHeight / 2.0
         
         return CGPoint(x: x, y: y)
     }
     
     private func headerBallPosition(index: Int) -> CGPoint {
-        let width = size.width
-        let height = size.height
-        let itemWidth = width / 9.0
-        let headerHeight = height - width
-        
         let x = itemWidth * CGFloat(index - 1)
         let y = (height - headerHeight) / 2.0
         
@@ -114,13 +122,10 @@ class VMLinesScene: SKScene,
     }
     
     private func headerLabelPosition(headerLabelType: kVMHeaderLabelType) -> CGPoint {
-        let width = size.width
-        let height = size.height
-        let headerHeight = height - width
-        
-        let x = headerLabelType == .left ?
-            (-width / 2.0 + kVMLabelIntent + kVMHeaderLabelWidth) : (width / 2.0 - kVMLabelIntent - kVMHeaderLabelWidth)
-        let y = (height - headerHeight) / 2.0 - 20.0
+        let labelHeight = bestScoreLabel?.frame.size.height ?? 20.0
+        let abs_x = width / 2.0 - kVMLabelIntent - kVMHeaderLabelWidth
+        let x = headerLabelType == .left ? -abs_x : abs_x
+        let y = (height - headerHeight) / 2.0 - labelHeight
         
         return CGPoint(x: x, y: y)
     }
@@ -155,7 +160,7 @@ class VMLinesScene: SKScene,
         let light = SCNLight()
         light.type = .omni
         lightNode.light = light
-        lightNode.position = SCNVector3(x: 0, y: 20, z: 10)
+        lightNode.position = SCNVector3(x: 12, y: 12, z: 12)
         ballScene.rootNode.addChildNode(lightNode)
     }
     
@@ -249,7 +254,6 @@ class VMLinesScene: SKScene,
             if let ballScene = SCNScene(named: name) {
                 let position = headerBallPosition(index: i)
                 removeFutureColor(point: position)
-                
                 setupLightForBallScene(ballScene: ballScene)
                 
                 let node = SK3DNode(viewportSize: kVMBallSize)
