@@ -29,7 +29,6 @@ protocol VMGameDelegate: class {
 
 class VMGame {
     var matrix : VMMatrix!
-    var timer  : VMTimer?
     
     var embryoColors = [String]()
     
@@ -77,7 +76,6 @@ class VMGame {
     private func setup() {
         matrix = VMMatrix(rows    : matrixSize.rows,
                           columns : matrixSize.columns)
-        //timer = VMTimer(game: self)
     }
     
     @objc func updateTimer() {
@@ -202,64 +200,64 @@ class VMGame {
     {
         let embryosCount = 3
         var emptyCells = matrix.emptyCells
+        let fullSizedCount = initially ? 5 : 3
         
-        if emptyCells.count < embryosCount {
-            restart()
-        } else {
-            let fullSizedCount = initially ? 5 : 3
-            
-            if initially {
-                //spawn fullSized balls
-                for _ in 1...fullSizedCount {
-                    if let color = ballColors.randomElement(),
-                       let spot = emptyCells.randomElement()
-                    {
-                        let ball = VMBall(color: color, size: .fullSized)
-                        fillElement(element: spot, ball: ball)
-                        
-                        emptyCells.removeAll(where: {$0 == spot})
-                    }
-                }
-            } else {
-                //grow up embryos
-                let embryos = matrix.embryoCells
-                var linesToHandle = [Set<VMMatrixElement>]()
-                
-                for embryoElement in embryos {
-                    growUpElement(element: embryoElement)
+        if initially {
+            //spawn fullSized balls
+            for _ in 1...fullSizedCount {
+                if let color = ballColors.randomElement(),
+                   let spot = emptyCells.randomElement()
+                {
+                    let ball = VMBall(color: color, size: .fullSized)
+                    fillElement(element: spot, ball: ball)
                     
-                    //Check if there's a line after the growUp
-                    let lines = matrix.linesWithElement(element: embryoElement)
+                    emptyCells.removeAll(where: {$0 == spot})
+                }
+            }
+        } else {
+            //grow up embryos
+            let embryos = matrix.embryoCells
+            var linesToHandle = [Set<VMMatrixElement>]()
+            
+            for embryoElement in embryos {
+                growUpElement(element: embryoElement)
+                
+                //Check if there's a line after the growUp
+                let lines = matrix.linesWithElement(element: embryoElement)
+                
+                if lines.count > 0 {
+                    linesToHandle.append(lines)
+                }
+            }
+            
+            //grow removed embryo up and
+            //put it back to the field (with random coordinates)
+            if let elementToRestore = elementToRestore {
+                if let spot = emptyCells.randomElement(),
+                   let color = elementToRestore.ball?.color
+                {
+                    let ball = VMBall(color: color, size: .fullSized)
+                    fillElement(element: spot, ball: ball)
+                    
+                    let lines = matrix.linesWithElement(element: spot)
                     
                     if lines.count > 0 {
                         linesToHandle.append(lines)
                     }
-                }
-                
-                //grow removed embryo up and
-                //put it back to the field (with random coordinates)
-                if let elementToRestore = elementToRestore {
-                    if let spot = emptyCells.randomElement(),
-                       let color = elementToRestore.ball?.color
-                    {
-                        let ball = VMBall(color: color, size: .fullSized)
-                        fillElement(element: spot, ball: ball)
-                        
-                        let lines = matrix.linesWithElement(element: spot)
-                        
-                        if lines.count > 0 {
-                            linesToHandle.append(lines)
-                        }
-                        
-                        emptyCells.removeAll(where: {$0 == spot})
-                    }
-                }
-                
-                for line in linesToHandle {
-                    handleLines(lines: line) { (finished) in }
+                    
+                    emptyCells.removeAll(where: {$0 == spot})
                 }
             }
             
+            for line in linesToHandle {
+                handleLines(lines: line) { (finished) in }
+            }
+        }
+        
+        if emptyCells.count < embryosCount {
+            //game over
+            restart()
+        } else {
             //spawn embryo balls
             for i in 0...embryosCount - 1 {
                 if let spot = emptyCells.randomElement(),

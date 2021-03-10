@@ -30,8 +30,7 @@
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dY8-0t-kZ9">
                                 <rect key="frame" x="8" y="684.5" width="44" height="44"/>
                                 <constraints>
-                                    <constraint firstAttribute="width" constant="44" id="K5y-rL-89q"/>
-                                    <constraint firstAttribute="height" constant="44" id="sHr-IS-w7h"/>
+                                    <constraint firstAttribute="width" secondItem="dY8-0t-kZ9" secondAttribute="height" multiplier="1:1" id="G5m-QT-fdv"/>
                                 </constraints>
                                 <state key="normal" image="sound_on" backgroundImage="tile"/>
                                 <state key="selected" image="sound_off" backgroundImage="tile"/>
@@ -41,10 +40,6 @@
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Jjl-Gd-3ss">
                                 <rect key="frame" x="362" y="684.5" width="44" height="44"/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="44" id="JXf-0I-LoA"/>
-                                    <constraint firstAttribute="height" constant="44" id="QpJ-BW-wJb"/>
-                                </constraints>
                                 <state key="normal" image="restart" backgroundImage="tile"/>
                                 <state key="selected" image="restart" backgroundImage="tile"/>
                                 <connections>
@@ -56,12 +51,16 @@
                         <color key="backgroundColor" white="0.0" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
                             <constraint firstItem="dY8-0t-kZ9" firstAttribute="top" secondItem="Jf7-BT-fP5" secondAttribute="bottom" constant="8" id="5t5-0w-5rP"/>
+                            <constraint firstItem="dY8-0t-kZ9" firstAttribute="width" secondItem="Jf7-BT-fP5" secondAttribute="width" multiplier="1:9" id="68K-DQ-oUj"/>
+                            <constraint firstItem="Jjl-Gd-3ss" firstAttribute="height" secondItem="dY8-0t-kZ9" secondAttribute="height" id="HD5-gp-gj0"/>
                             <constraint firstItem="Jf7-BT-fP5" firstAttribute="centerX" secondItem="RCh-1O-LQd" secondAttribute="centerX" id="MQi-9D-pZg"/>
                             <constraint firstItem="Jjl-Gd-3ss" firstAttribute="centerY" secondItem="dY8-0t-kZ9" secondAttribute="centerY" id="YkU-3z-FYJ"/>
-                            <constraint firstItem="Jf7-BT-fP5" firstAttribute="centerY" secondItem="RCh-1O-LQd" secondAttribute="centerY" id="feD-Yl-hqx"/>
+                            <constraint firstItem="Jf7-BT-fP5" firstAttribute="centerY" secondItem="RCh-1O-LQd" secondAttribute="centerY" priority="990" id="feD-Yl-hqx"/>
                             <constraint firstItem="dY8-0t-kZ9" firstAttribute="leading" secondItem="Jf7-BT-fP5" secondAttribute="leading" id="mSk-iU-VFj"/>
+                            <constraint firstItem="Jjl-Gd-3ss" firstAttribute="width" secondItem="dY8-0t-kZ9" secondAttribute="width" id="onw-9N-NkV"/>
                             <constraint firstItem="Mwl-mb-kcj" firstAttribute="trailing" secondItem="Jf7-BT-fP5" secondAttribute="trailing" constant="8" id="pRe-f6-woK"/>
                             <constraint firstItem="Jf7-BT-fP5" firstAttribute="leading" secondItem="Mwl-mb-kcj" secondAttribute="leading" constant="8" id="pXH-ta-2Xq"/>
+                            <constraint firstItem="Mwl-mb-kcj" firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="dY8-0t-kZ9" secondAttribute="bottom" constant="8" id="ryW-DH-WbS"/>
                             <constraint firstItem="Jjl-Gd-3ss" firstAttribute="trailing" secondItem="Jf7-BT-fP5" secondAttribute="trailing" id="s2d-4L-wwx"/>
                         </constraints>
                         <connections>
