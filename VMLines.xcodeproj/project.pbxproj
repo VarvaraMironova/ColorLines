@@ -25,6 +25,7 @@
 		D77B181F25D06EA5002F1BA0 /* VMLinesUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D77B181E25D06EA5002F1BA0 /* VMLinesUITests.swift */; };
 		D77B183325D07169002F1BA0 /* VMMatrix.swift in Sources */ = {isa = PBXBuildFile; fileRef = D77B183225D07169002F1BA0 /* VMMatrix.swift */; };
 		D77B183825D08D7E002F1BA0 /* VMMatrixElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = D77B183725D08D7E002F1BA0 /* VMMatrixElement.swift */; };
+		D781452725F91F720048E177 /* ARCADE.TTF in Resources */ = {isa = PBXBuildFile; fileRef = D781452625F91F720048E177 /* ARCADE.TTF */; };
 		D79E5DD225F2CA9D00BA97E9 /* particle_sq.png in Resources */ = {isa = PBXBuildFile; fileRef = D79E5DD125F2CA9D00BA97E9 /* particle_sq.png */; };
 		D79E5DF125F2F96D00BA97E9 /* exposion.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = D79E5DF025F2F96D00BA97E9 /* exposion.mp3 */; };
 /* End PBXBuildFile section */
@@ -71,6 +72,7 @@
 		D77B182025D06EA5002F1BA0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D77B183225D07169002F1BA0 /* VMMatrix.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VMMatrix.swift; sourceTree = "<group>"; };
 		D77B183725D08D7E002F1BA0 /* VMMatrixElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VMMatrixElement.swift; sourceTree = "<group>"; };
+		D781452625F91F720048E177 /* ARCADE.TTF */ = {isa = PBXFileReference; lastKnownFileType = file; path = ARCADE.TTF; sourceTree = "<group>"; };
 		D79E5DD125F2CA9D00BA97E9 /* particle_sq.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = particle_sq.png; sourceTree = "<group>"; };
 		D79E5DF025F2F96D00BA97E9 /* exposion.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = exposion.mp3; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -115,6 +117,7 @@
 		D776201725E5C871003FC3FA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				D781451825F8793B0048E177 /* fonts */,
 				D79E5DE725F2F69900BA97E9 /* sounds */,
 				D79E5DD125F2CA9D00BA97E9 /* particle_sq.png */,
 				D776200F25E5AFAF003FC3FA /* VMLinesScene.sks */,
@@ -167,12 +170,9 @@
 			isa = PBXGroup;
 			children = (
 				D711FFBC25D21D320066CFC8 /* Models */,
-				D77B17FC25D06EA3002F1BA0 /* AppDelegate.swift */,
-				D77B17FE25D06EA3002F1BA0 /* SceneDelegate.swift */,
+				D781451625F879050048E177 /* AppDelegate */,
 				D77987A325D881A700DDEF38 /* GUI */,
-				D77B180225D06EA3002F1BA0 /* Main.storyboard */,
-				D77B180725D06EA5002F1BA0 /* LaunchScreen.storyboard */,
-				D77B180A25D06EA5002F1BA0 /* Info.plist */,
+				D781451725F8791D0048E177 /* SupportingFiles */,
 				D776201725E5C871003FC3FA /* Resources */,
 			);
 			path = VMLines;
@@ -194,6 +194,33 @@
 				D77B182025D06EA5002F1BA0 /* Info.plist */,
 			);
 			path = VMLinesUITests;
+			sourceTree = "<group>";
+		};
+		D781451625F879050048E177 /* AppDelegate */ = {
+			isa = PBXGroup;
+			children = (
+				D77B17FE25D06EA3002F1BA0 /* SceneDelegate.swift */,
+				D77B17FC25D06EA3002F1BA0 /* AppDelegate.swift */,
+			);
+			name = AppDelegate;
+			sourceTree = "<group>";
+		};
+		D781451725F8791D0048E177 /* SupportingFiles */ = {
+			isa = PBXGroup;
+			children = (
+				D77B180225D06EA3002F1BA0 /* Main.storyboard */,
+				D77B180725D06EA5002F1BA0 /* LaunchScreen.storyboard */,
+				D77B180A25D06EA5002F1BA0 /* Info.plist */,
+			);
+			name = SupportingFiles;
+			sourceTree = "<group>";
+		};
+		D781451825F8793B0048E177 /* fonts */ = {
+			isa = PBXGroup;
+			children = (
+				D781452625F91F720048E177 /* ARCADE.TTF */,
+			);
+			name = fonts;
 			sourceTree = "<group>";
 		};
 		D79E5DE725F2F69900BA97E9 /* sounds */ = {
@@ -307,6 +334,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D781452725F91F720048E177 /* ARCADE.TTF in Resources */,
 				D776207025EF430E003FC3FA /* ExplodeBall.scnassets in Resources */,
 				D7761FC525DF4440003FC3FA /* VMBalls.scnassets in Resources */,
 				D77B180925D06EA5002F1BA0 /* LaunchScreen.storyboard in Resources */,

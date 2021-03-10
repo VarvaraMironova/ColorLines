@@ -16,6 +16,10 @@ protocol VMGameDelegate: class {
     func removeBall(element           : VMMatrixElement,
                      completion block : @escaping (Bool) -> Void)
     
+    func updateScore(score: Int)
+    
+    func updateBestScore(bestScore: Int)
+    
     func growUpBall(element: VMMatrixElement)
     
     func pickFutureColors(colors: [String])
@@ -35,25 +39,40 @@ class VMGame {
         }
     }
     
-    public var score : Int = 0 {
+    var score : Int = 0 {
         didSet {
+            if score == oldValue {
+                return
+            }
+            
+            gameDelegate?.updateScore(score: score)
+            
             if score > bestScore {
-                UserDefaults().set(score, forKey: kVMBestScoreKey)
+                bestScore = score
             }
         }
     }
     
-    public lazy var bestScore : Int = {
-        return UserDefaults().integer(forKey: kVMBestScoreKey)
-    }()
+    var bestScore : Int {
+        set {
+            UserDefaults().set(newValue, forKey: kVMBestScoreKey)
+            gameDelegate?.updateBestScore(bestScore: newValue)
+        }
+        
+        get {
+            return UserDefaults().integer(forKey: kVMBestScoreKey)
+        }
+        
+    }
     
     let kVMBestScoreKey = "bestScore"
     let ballColors = ["darkBlue", "darkRed", "green", "lightBlue", "lightRed", "pink", "yellow"]
     let matrixSize = (rows: 9, columns: 9)
     
     weak var gameDelegate: VMGameDelegate? {
-        didSet(aNewValue) {
+        didSet {
             spawnBalls(initially: true)
+            gameDelegate?.updateBestScore(bestScore: bestScore)
         }
     }
     
@@ -64,7 +83,6 @@ class VMGame {
     private func setup() {
         matrix = VMMatrix(rows    : matrixSize.rows,
                           columns : matrixSize.columns)
-        
         //timer = VMTimer(game: self)
     }
     
@@ -76,6 +94,7 @@ class VMGame {
     public func restart() {
         gameDelegate?.gameOver()
         score = 0
+        bestScore = UserDefaults().integer(forKey: kVMBestScoreKey)
         embryoColors = [String]()
         setup()
         spawnBalls(initially: true)
